@@ -111,6 +111,30 @@ public class miniSysYBaseListener implements miniSysYListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAddExp0(miniSysYParser.AddExp0Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAddExp0(miniSysYParser.AddExp0Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAddOp(miniSysYParser.AddOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAddOp(miniSysYParser.AddOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMulExp(miniSysYParser.MulExpContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -123,6 +147,30 @@ public class miniSysYBaseListener implements miniSysYListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMulExp0(miniSysYParser.MulExp0Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMulExp0(miniSysYParser.MulExp0Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMulOp(miniSysYParser.MulOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMulOp(miniSysYParser.MulOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterUnaryExp(miniSysYParser.UnaryExpContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -130,6 +178,18 @@ public class miniSysYBaseListener implements miniSysYListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUnaryExp(miniSysYParser.UnaryExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUnaryOp(miniSysYParser.UnaryOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnaryOp(miniSysYParser.UnaryOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -58,17 +58,47 @@ public interface miniSysYVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAddExp(miniSysYParser.AddExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#addExp0}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddExp0(miniSysYParser.AddExp0Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#addOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddOp(miniSysYParser.AddOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link miniSysYParser#mulExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitMulExp(miniSysYParser.MulExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#mulExp0}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMulExp0(miniSysYParser.MulExp0Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#mulOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMulOp(miniSysYParser.MulOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link miniSysYParser#unaryExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitUnaryExp(miniSysYParser.UnaryExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#unaryOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryOp(miniSysYParser.UnaryOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link miniSysYParser#primaryExp}.
 	 * @param ctx the parse tree

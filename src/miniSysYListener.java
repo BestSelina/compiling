@@ -87,6 +87,26 @@ public interface miniSysYListener extends ParseTreeListener {
 	 */
 	void exitAddExp(miniSysYParser.AddExpContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#addExp0}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddExp0(miniSysYParser.AddExp0Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#addExp0}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddExp0(miniSysYParser.AddExp0Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#addOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddOp(miniSysYParser.AddOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#addOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddOp(miniSysYParser.AddOpContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link miniSysYParser#mulExp}.
 	 * @param ctx the parse tree
 	 */
@@ -97,6 +117,26 @@ public interface miniSysYListener extends ParseTreeListener {
 	 */
 	void exitMulExp(miniSysYParser.MulExpContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#mulExp0}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulExp0(miniSysYParser.MulExp0Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#mulExp0}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulExp0(miniSysYParser.MulExp0Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#mulOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulOp(miniSysYParser.MulOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#mulOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulOp(miniSysYParser.MulOpContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link miniSysYParser#unaryExp}.
 	 * @param ctx the parse tree
 	 */
@@ -106,6 +146,16 @@ public interface miniSysYListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryExp(miniSysYParser.UnaryExpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#unaryOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnaryOp(miniSysYParser.UnaryOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#unaryOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnaryOp(miniSysYParser.UnaryOpContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link miniSysYParser#primaryExp}.
 	 * @param ctx the parse tree
