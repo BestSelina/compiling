@@ -14,7 +14,7 @@ public class Main {
 
         while (scanner.hasNextLine()) {
             String next = scanner.nextLine();
-            if(next.equals("")) break;
+//             if(next.equals("")) break;
             str.append(next).append('\n');
         }
         CharStream inputStream = CharStreams.fromString(str.toString());
