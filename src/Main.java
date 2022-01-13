@@ -19,12 +19,12 @@ public class Main {
         }
         CharStream inputStream = CharStreams.fromString(str.toString());
 
-        miniSysY_v1Lexer lexer = new miniSysY_v1Lexer(inputStream);
+        miniSysYLexer lexer = new miniSysYLexer(inputStream);
         lexer.removeErrorListeners();
         lexer.addErrorListener(new ErrorHandler());
 
         CommonTokenStream tokenStream = new CommonTokenStream(lexer); // 词法分析获取 token 流
-        miniSysY_v1Parser parser = new miniSysY_v1Parser(tokenStream);
+        miniSysYParser parser = new miniSysYParser(tokenStream);
         parser.removeErrorListeners();
         parser.addErrorListener(new ErrorHandler());
 
