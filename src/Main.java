@@ -14,24 +14,22 @@ public class Main {
 
         while (scanner.hasNextLine()) {
             String next = scanner.nextLine();
-//           if(next.equals("")) break;
-            str.append(next);
+            if(next.equals("")) break;
+            str.append(next).append('\n');
         }
+        CharStream inputStream = CharStreams.fromString(str.toString());
 
-        System.out.print(str);
-//        CharStream inputStream = CharStreams.fromString(str.toString());
-//
-//        miniSysYLexer lexer = new miniSysYLexer(inputStream);
-//        lexer.removeErrorListeners();
-//        lexer.addErrorListener(new ErrorHandler());
-//
-//        CommonTokenStream tokenStream = new CommonTokenStream(lexer); // 词法分析获取 token 流
-//        miniSysYParser parser = new miniSysYParser(tokenStream);
-//        parser.removeErrorListeners();
-//        parser.addErrorListener(new ErrorHandler());
-//
-//        ParseTree tree = parser.compUnit(); // 获取语法树的根节点
-//        Visitor visitor = new Visitor();
-//        visitor.visit(tree);
+        miniSysYLexer lexer = new miniSysYLexer(inputStream);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new ErrorHandler());
+
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer); // 词法分析获取 token 流
+        miniSysYParser parser = new miniSysYParser(tokenStream);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ErrorHandler());
+
+        ParseTree tree = parser.compUnit(); // 获取语法树的根节点
+        Visitor visitor = new Visitor();
+        visitor.visit(tree);
     }
 }

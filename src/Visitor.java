@@ -1,4 +1,4 @@
-import java.awt.*;
+
 import java.util.*;
 import java.util.List;
 
@@ -8,7 +8,6 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     HashMap<String, String> constList = new HashMap<>();
     HashMap<String, String> valList = new HashMap<>();
     int i = 1;
-    StringBuffer exp = new StringBuffer();
 
     public String visitCompUnit(miniSysYParser.CompUnitContext ctx){
         visitFuncDef(ctx.funcDef());
@@ -201,10 +200,14 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     }
 
     public String visitStmt(miniSysYParser.StmtContext ctx){
-        if(ctx.lVal() != null && ctx.Assign() != null){
-            String exp = visitExp(ctx.exp());
-            System.out.println("\tstore i32 " + calculateVal(exp) + ", i32* " + valList.get(visitLVal(ctx.lVal())));
-            return "";
+        if(visitLVal(ctx.lVal()) != null && ctx.Assign() != null){
+            if(!valList.containsKey(visitLVal(ctx.lVal())))
+                System.exit(2);
+            else {
+                String exp = visitExp(ctx.exp());
+                System.out.println("\tstore i32 " + calculateVal(exp) + ", i32* " + valList.get(visitLVal(ctx.lVal())));
+                return "";
+            }
         }
         else if(ctx.Return() != null) {
             String exp = visitExp(ctx.exp());
@@ -215,6 +218,7 @@ public class Visitor extends miniSysYBaseVisitor<String> {
             return visitExp(ctx.exp());
         else
             return "";
+        return "";
     }
 
     public String visitExp(miniSysYParser.ExpContext ctx){
@@ -222,7 +226,9 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     }
 
     public String visitLVal(miniSysYParser.LValContext ctx){
+        if (ctx != null)
         return ctx.Ident().toString();
+        return "";
     }
 
     public String visitAddExp(miniSysYParser.AddExpContext ctx){
