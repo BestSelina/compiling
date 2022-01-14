@@ -14,9 +14,11 @@ public class Main {
 
         while (scanner.hasNextLine()) {
             String next = scanner.nextLine();
-//             if(next.equals("")) break;
+//            if(next.equals("")) break;
             str.append(next).append('\n');
         }
+
+        Function.declareFunc(str.toString());
         CharStream inputStream = CharStreams.fromString(str.toString());
 
         miniSysYLexer lexer = new miniSysYLexer(inputStream);

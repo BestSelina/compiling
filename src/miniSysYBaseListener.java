@@ -315,6 +315,18 @@ public class miniSysYBaseListener implements miniSysYListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterFuncRParams(miniSysYParser.FuncRParamsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFuncRParams(miniSysYParser.FuncRParamsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterUnaryOp(miniSysYParser.UnaryOpContext ctx) { }
 	/**
 	 * {@inheritDoc}

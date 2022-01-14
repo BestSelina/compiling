@@ -7,6 +7,7 @@ public class Visitor extends miniSysYBaseVisitor<String> {
 
     HashMap<String, String> constList = new HashMap<>();
     HashMap<String, String> valList = new HashMap<>();
+
     int i = 1;
 
     public String visitCompUnit(miniSysYParser.CompUnitContext ctx){
@@ -144,7 +145,6 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         }
     }
 
-
     public String visitInitVal(miniSysYParser.InitValContext ctx){
         String expression = visitExp(ctx.exp());
         String[] item = expression.split("[!]+");
@@ -192,8 +192,19 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                 }
                 else if (isNumber(s))
                     stack.push(s);
-                else
-                    System.exit(2);
+                else {
+                    if (Function.checkFuncIdent(s) == 0) {
+                        System.out.println("\t%x" + i + " = " + "call i32 @" + s + "()");
+                        stack.push("%x" + i);
+                        i++;
+                    }else if(Function.checkFuncIdent(s) == 1) {
+                        System.out.println("\tcall void @" + s + "(i32 " + "%x" + i);
+                        stack.push("%x" + i);
+                        i++;
+                    }
+                    else
+                        System.exit(2);
+                }
             }
         }
         return stack.peek();
@@ -214,15 +225,22 @@ public class Visitor extends miniSysYBaseVisitor<String> {
             System.out.println("\tret i32 " + calculateVal(exp));
             return "";
         }
-        else if(ctx.exp() != null)
-            return visitExp(ctx.exp());
+        else if(ctx.exp() != null) {
+            visitExp(ctx.exp());
+
+            return "";
+        }
         else
             return "";
         return "";
     }
 
-    public String visitExp(miniSysYParser.ExpContext ctx){
-        return visitAddExp(ctx.addExp());
+    public String visitExp(miniSysYParser.ExpContext ctx) {
+        if (ctx != null) {
+            return visitAddExp(ctx.addExp());
+        }
+        else
+            return "";
     }
 
     public String visitLVal(miniSysYParser.LValContext ctx){
@@ -239,12 +257,8 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         String[] item = expression.split("[!]+");
         List<String> expList = Arrays.asList(item);
         List<String> postfixExp = parseToSuffixExpression(expList);
-//        if(postfixExp.size() == 1 && isNumber(postfixExp.get(0))) {
-//            System.out.println("\tret i32 " + postfixExp.get(0));
-//            return "";
-//        }
         Stack<String> stack = new Stack<>();
-        for(String s: postfixExp) {
+        for (String s : postfixExp) {
             if (s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("%")) {
                 String topStack = stack.pop();
                 String secStack = stack.pop();
@@ -272,7 +286,7 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                         break;
                     default:
                         break;
-                }
+                    }
             } else {
                 if (constList.containsKey(s))
                     stack.push(constList.get(s));
@@ -280,17 +294,24 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                     System.out.println("\t%x" + i + " = load i32, i32* " + valList.get(s));
                     stack.push("%x" + i);
                     i++;
-                }
-                else if (isNumber(s))
+                } else if (isNumber(s))
                     stack.push(s);
-                else
+                else if (Function.checkFuncIdent(s) == 0) {
+                    System.out.println("\t%x" + i + " = call i32 @" + s + "()");
+                    stack.push("%x" + i);
+                    i++;
+                } else if (Function.checkFuncIdent(s) == 1) {
+                    System.out.println("\tcall void @" + s + "(i32 " + "%x" + i + ")");
+                    stack.push("%x" + i);
+                    i++;
+                } else
                     System.exit(2);
             }
         }
         return stack.peek();
     }
 
-    public List<String> parseToSuffixExpression(List<String> expressionList){
+    public List<String>  parseToSuffixExpression(List<String> expressionList){
         Stack<String> opStack = new Stack<>();
         List<String> suffixList = new ArrayList<>();
         for(String item : expressionList){
@@ -311,7 +332,9 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                 suffixList.add(item);
             }else if(constList.containsKey(item)){
                 suffixList.add(item);
-            }else if("(".equals(item)){
+            } else if(Function.checkFuncIdent(item) == 0 || Function.checkFuncIdent(item) == 1 ){
+                suffixList.add(item);
+            } else if("(".equals(item)){
                 opStack.push(item);
             }else if(")".equals(item)){
                 while (!opStack.isEmpty()){
@@ -401,8 +424,27 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         else if(ctx.primaryExp() != null){
             return visitPrimaryExp(ctx.primaryExp());
         }
+        else if(ctx.Ident() != null && ctx.funcRParams() == null){
+            if(Function.checkFuncIdent(ctx.Ident().toString()) == 0 || Function.checkFuncIdent(ctx.Ident().toString()) == 1)
+                return (ctx.Ident()).toString() + "!(!" + "!)!";
+            else
+                System.exit(2);
+        }
+        else if(ctx.Ident() != null && ctx.funcRParams() != null){
+            if(Function.checkFuncIdent(ctx.Ident().toString()) == 0 || Function.checkFuncIdent(ctx.Ident().toString()) == 1) {
+                System.out.println("\tcall void @" + ctx.Ident().toString() + "(i32 " + visitFuncRParams(ctx.funcRParams()) + ")");
+            }
+            else
+                System.exit(2);
+        }
         return "";
     }
+
+    public String visitFuncRParams(miniSysYParser.FuncRParamsContext ctx){
+        String exp = visitExp(ctx.exp());
+        return calculateVal(exp);
+    }
+
 
     public String visitUnaryOp(miniSysYParser.UnaryOpContext ctx){
         if(ctx.Add() != null)
@@ -420,8 +462,9 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         else if(ctx.LPar() != null){
             return "!(!" + visitExp(ctx.exp()) + "!)!";
         }
-        else
+        else if(ctx.lVal() != null)
             return visitLVal(ctx.lVal());
+        return "";
     }
 
 
