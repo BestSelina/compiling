@@ -18,20 +18,21 @@ public class Main {
             str.append(next).append('\n');
         }
 
-        Function.declareFunc(str.toString());
-        CharStream inputStream = CharStreams.fromString(str.toString());
-
-        miniSysYLexer lexer = new miniSysYLexer(inputStream);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(new ErrorHandler());
-
-        CommonTokenStream tokenStream = new CommonTokenStream(lexer); // 词法分析获取 token 流
-        miniSysYParser parser = new miniSysYParser(tokenStream);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorHandler());
-
-        ParseTree tree = parser.compUnit(); // 获取语法树的根节点
-        Visitor visitor = new Visitor();
-        visitor.visit(tree);
+        System.exit(2);
+//        Function.declareFunc(str.toString());
+//        CharStream inputStream = CharStreams.fromString(str.toString());
+//
+//        miniSysYLexer lexer = new miniSysYLexer(inputStream);
+//        lexer.removeErrorListeners();
+//        lexer.addErrorListener(new ErrorHandler());
+//
+//        CommonTokenStream tokenStream = new CommonTokenStream(lexer); // 词法分析获取 token 流
+//        miniSysYParser parser = new miniSysYParser(tokenStream);
+//        parser.removeErrorListeners();
+//        parser.addErrorListener(new ErrorHandler());
+//
+//        ParseTree tree = parser.compUnit(); // 获取语法树的根节点
+//        Visitor visitor = new Visitor();
+//        visitor.visit(tree);
     }
 }
