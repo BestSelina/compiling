@@ -1,4 +1,4 @@
-// Generated from C:/Users/Best Selina/Desktop/lab4/src\miniSysY.g4 by ANTLR 4.9.2
+// Generated from C:/Users/Best Selina/Desktop/lab5/src\miniSysY.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -15,6 +15,24 @@ public interface miniSysYVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCompUnit(miniSysYParser.CompUnitContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#globalDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDecl(miniSysYParser.GlobalDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#globalVarDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalVarDecl(miniSysYParser.GlobalVarDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link miniSysYParser#globalVarDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalVarDef(miniSysYParser.GlobalVarDefContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link miniSysYParser#funcDef}.
 	 * @param ctx the parse tree

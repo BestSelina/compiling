@@ -1,21 +1,58 @@
-
-import com.sun.deploy.security.SelectableSecurityManager;
-
 import java.util.*;
 import java.util.List;
 
 
 public class Visitor extends miniSysYBaseVisitor<String> {
 
-    HashMap<String, String> constList = new HashMap<>();
-    HashMap<String, String> valList = new HashMap<>();
+    ArrayList<HashMap<String, String>> constList = new ArrayList<>();
+    ArrayList<HashMap<String, String>> valList = new ArrayList<>();
+    HashMap<String, String> globalValList = new HashMap<>();
 
     int i = 1;
+    int count = -1;
+    int flag = 0;
 
     public String visitCompUnit(miniSysYParser.CompUnitContext ctx){
-        visitFuncDef(ctx.funcDef());
-        return null;
+        if(ctx.children.size() == 1)
+            visitFuncDef(ctx.funcDef());
+        else{
+            count++;
+            constList.add(new HashMap<>());
+            valList.add(new HashMap<>());
+            for (int j = 0; j < ctx.globalDecl().size(); j++)
+                visitGlobalDecl(ctx.globalDecl(j));
+            visitFuncDef(ctx.funcDef());
+        }
+        return "";
     }
+
+    public String visitGlobalDecl(miniSysYParser.GlobalDeclContext ctx){
+        if(ctx.constDecl() != null)
+            visitConstDecl(ctx.constDecl());
+        else
+            visitGlobalVarDecl(ctx.globalVarDecl());
+        return "";
+    }
+
+    public String visitGlobalVarDecl(miniSysYParser.GlobalVarDeclContext ctx){
+        int j;
+        for(j = 0; j < ctx.globalVarDef().size(); j++)
+            visitGlobalVarDef(ctx.globalVarDef(j));
+        return "";
+    }
+
+    public String visitGlobalVarDef(miniSysYParser.GlobalVarDefContext ctx){
+        if (valList.get(count).containsKey(ctx.Ident().toString()))
+            System.exit(2);
+        valList.get(count).put(ctx.Ident().toString(), "@" + ctx.Ident().toString());
+        flag = 1;
+        if (ctx.Assign()== null)
+            System.out.println("@" + ctx.Ident().toString() + " = dso_local global i32 0");
+        else
+            System.out.println("@" + ctx.Ident().toString() + " = dso_local global i32 " + visitConstExp(ctx.constExp()));
+        return "";
+    }
+
 
     public String visitFuncDef(miniSysYParser.FuncDefContext ctx){
         visitFuncType(ctx.funcType());
@@ -39,8 +76,15 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     }
 
     public String visitBlock(miniSysYParser.BlockContext ctx){
-        for (int j = 0; j < ctx.blockItem().size(); j++)
+        count++;
+        constList.add(new HashMap<>());
+        valList.add(new HashMap<>());
+        for (int j = 0; j < ctx.blockItem().size(); j++) {
             visitBlockItem(ctx.blockItem(j));
+        }
+        constList.remove(count);
+        valList.remove(count);
+        count--;
         return "";
     }
 
@@ -71,9 +115,9 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     }
 
     public String visitConstDef(miniSysYParser.ConstDefContext ctx){
-        if (constList.containsKey(ctx.Ident().toString()))
+        if (constList.get(count).containsKey(ctx.Ident().toString()))
             System.exit(2);
-        constList.put(ctx.Ident().toString(), visitConstInitVal(ctx.constInitVal()));
+        constList.get(count).put(ctx.Ident().toString(), visitConstInitVal(ctx.constInitVal()));
         return "";
     }
 
@@ -112,12 +156,22 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                 }
             }
             else {
-                if(constList.containsKey(s))
-                    stack.push(constList.get(s));
-                else if(isNumber(s))
+                if(isNumber(s))
                     stack.push(s);
-                else
-                    System.exit(2);
+                else {
+                    int j;
+                    for(j = count; j >= 0; j--) {
+                        if (constList.get(j).containsKey(s))
+                            stack.push(constList.get(j).get(s));
+                    }
+                    if(flag == 1 && valList.get(0).containsKey(s)) {
+                        System.out.println("%x" + i + " = load i32, i32* " + valList.get(0).get(s));
+                        i++;
+                    }
+                    else
+                        System.exit(2);
+
+                }
             }
         }
         return stack.peek();
@@ -132,16 +186,16 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     }
 
     public String visitVarDef(miniSysYParser.VarDefContext ctx) {
-        if (valList.containsKey(ctx.Ident().toString()))
+        if (valList.get(count).containsKey(ctx.Ident().toString()))
             System.exit(2);
-        valList.put(ctx.Ident().toString(), "%x" + i);
+        valList.get(count).put(ctx.Ident().toString(), "%x" + i);
         System.out.println("\t%x" + i + " = alloca i32");
         i++;
         if (ctx.Assign() == null)
             return "";
         else {
             String value = visitInitVal(ctx.initVal());
-            System.out.println("\tstore i32 " + value + ", i32* " + valList.get(ctx.Ident().toString()));
+            System.out.println("\tstore i32 " + value + ", i32* " + valList.get(count).get(ctx.Ident().toString()));
             return "";
         }
     }
@@ -183,28 +237,30 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                     default:
                         break;
                 }
-            } else {
-                if (constList.containsKey(s))
-                    stack.push(constList.get(s));
-                else if (valList.containsKey(s)) {
-                    System.out.println("\t%x" + i + " = load i32, i32* " + valList.get(s));
-                    stack.push("%x" + i);
-                    i++;
-                }
-                else if (isNumber(s))
-                    stack.push(s);
-                else {
-                    if (Function.checkFuncIdent(s) == 0) {
-                        System.out.println("\t%x" + i + " = " + "call i32 @" + s + "()");
-                        stack.push("%x" + i);
-                        i++;
-                    }else if(Function.checkFuncIdent(s) == 1) {
-                        System.out.println("\tcall void @" + s + "(i32 " + "%x" + i);
+            }
+            else if (isNumber(s))
+                stack.push(s);
+            else if (Function.checkFuncIdent(s) == 0) {
+                System.out.println("\t%x" + i + " = " + "call i32 @" + s + "()");
+                stack.push("%x" + i);
+                i++;
+            }
+            else if(Function.checkFuncIdent(s) == 1) {
+                System.out.println("\tcall void @" + s + "(i32 " + "%x" + i);
+                stack.push("%x" + i);
+                i++;
+            }
+            else {
+                int j;
+                for(j = count; j >= 0; j--) {
+                    if (constList.get(j).containsKey(s)) {
+                        stack.push(constList.get(j).get(s));
+                    }
+                    else if (valList.get(j).containsKey(s)) {
+                        System.out.println("\t%x" + i + " = load i32, i32* " + valList.get(j).get(s));
                         stack.push("%x" + i);
                         i++;
                     }
-                    else
-                        System.exit(2);
                 }
             }
         }
@@ -213,11 +269,11 @@ public class Visitor extends miniSysYBaseVisitor<String> {
 
     public String visitStmt(miniSysYParser.StmtContext ctx){
         if(visitLVal(ctx.lVal()) != null && ctx.Assign() != null){
-            if(!valList.containsKey(visitLVal(ctx.lVal())))
+            if(!valList.get(count).containsKey(visitLVal(ctx.lVal())))
                 System.exit(2);
             else {
                 String exp = visitExp(ctx.exp());
-                System.out.println("\tstore i32 " + calculateVal(exp) + ", i32* " + valList.get(visitLVal(ctx.lVal())));
+                System.out.println("\tstore i32 " + calculateVal(exp) + ", i32* " + valList.get(count).get(visitLVal(ctx.lVal())));
                 return "";
             }
         }
@@ -341,8 +397,14 @@ public class Visitor extends miniSysYBaseVisitor<String> {
     }
 
     public String visitLVal(miniSysYParser.LValContext ctx){
-        if (ctx != null)
-        return ctx.Ident().toString();
+        if (ctx != null) {
+            int j;
+            for (j = count; j >= 0; j--) {
+                if (valList.get(j).containsKey(ctx.Ident().toString()))
+                    return valList.get(j).get(ctx.Ident().toString());
+            }
+            System.exit(2);
+        }
         return "";
     }
 
@@ -354,6 +416,7 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         String[] item = expression.split("[$]+");
         List<String> expList = Arrays.asList(item);
         List<String> postfixExp = parseToSuffixExpression(expList);
+        System.out.println(postfixExp);
         Stack<String> stack = new Stack<>();
         for (String s : postfixExp) {
             if (isOperator(s)) {
@@ -406,25 +469,30 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                         System.out.println("\t%x" + i + " = zext i1 %x" + k + " to i32");
                     }
                     i++;
-            } else {
-                if (constList.containsKey(s))
-                    stack.push(constList.get(s));
-                else if (valList.containsKey(s)) {
-                    System.out.println("\t%x" + i + " = load i32, i32* " + valList.get(s));
+            }
+            else if (isNumber(s))
+                stack.push(s);
+            else if (Function.checkFuncIdent(s) == 0) {
+                System.out.println("\t%x" + i + " = call i32 @" + s + "()");
+                stack.push("%x" + i);
+                i++;
+            }
+            else if (Function.checkFuncIdent(s) == 1) {
+                System.out.println("\tcall void @" + s + "(i32 " + "%x" + i + ")");
+                stack.push("%x" + i);
+                i++;
+            }
+            else {
+                int j;
+                for(j = count; j >= 0; j--) {
+                    if (constList.get(j).containsKey(s))
+                        stack.push(constList.get(j).get(s));
+                    }
+                if (s.contains("@")) {
+                    System.out.println("\t%x" + i + " = load i32, i32* " + s);
                     stack.push("%x" + i);
                     i++;
-                } else if (isNumber(s))
-                    stack.push(s);
-                else if (Function.checkFuncIdent(s) == 0) {
-                    System.out.println("\t%x" + i + " = call i32 @" + s + "()");
-                    stack.push("%x" + i);
-                    i++;
-                } else if (Function.checkFuncIdent(s) == 1) {
-                    System.out.println("\tcall void @" + s + "(i32 " + "%x" + i + ")");
-                    stack.push("%x" + i);
-                    i++;
-                } else
-                    System.exit(2);
+                }
             }
         }
         if(stack.empty())
@@ -448,13 +516,17 @@ public class Visitor extends miniSysYBaseVisitor<String> {
                     }
                     opStack.push(item);
                 }
-            }else if(isNumber(item)){
+            }
+            else if(isNumber(item)){
                 suffixList.add(item);
-            }else if(valList.containsKey(item)){
+            }
+            else if(haveConstDecl(item)){
                 suffixList.add(item);
-            }else if(constList.containsKey(item)){
+            }
+            else if(haveVarDecl(item)){
                 suffixList.add(item);
-            } else if(Function.checkFuncIdent(item) == 0 || Function.checkFuncIdent(item) == 1 ){
+            }
+            else if(Function.checkFuncIdent(item) == 0 || Function.checkFuncIdent(item) == 1 ){
                 suffixList.add(item);
             } else if("(".equals(item)){
                 opStack.push(item);
@@ -476,6 +548,23 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         return suffixList;
     }
 
+    public boolean haveVarDecl(String decl){
+        int j;
+        for(j = count; j >= 0; j= j-1){
+            if(valList.get(j).containsKey(decl));
+                return true;
+        }
+        return false;
+    }
+
+    public boolean haveConstDecl(String decl){
+        int j;
+        for(j = count; j >= 0; j= j-1){
+            if(constList.get(j).containsKey(decl));
+            return true;
+        }
+        return false;
+    }
 
     public static boolean isOperator(String op){
         return op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("%") || op.equals("<") || op.equals(">") || op.equals("<=") || op.equals(">=") || op.equals("==") || op.equals("!=") || op.equals("&&") || op.equals("||");
@@ -599,8 +688,16 @@ public class Visitor extends miniSysYBaseVisitor<String> {
         else if(ctx.LPar() != null){
             return "$($" + visitExp(ctx.exp()) + "$)$";
         }
-        else if(ctx.lVal() != null)
-            return visitLVal(ctx.lVal());
+        else if(ctx.lVal() != null) {
+            for (int j = count; j >= 0; j--)
+                if (valList.get(j).containsKey(ctx.lVal().Ident().toString()))
+                    return valList.get(j).get(ctx.lVal().Ident().toString());
+            for (int j = count; j >= 0; j--)
+                if (constList.get(j).containsKey(ctx.lVal().Ident().toString()))
+                    return constList.get(j).get(ctx.lVal().Ident().toString());
+            System.exit(2);
+            return "";
+        }
         return "";
     }
 

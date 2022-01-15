@@ -1,4 +1,4 @@
-// Generated from C:/Users/Best Selina/Desktop/lab4/src\miniSysY.g4 by ANTLR 4.9.2
+// Generated from C:/Users/Best Selina/Desktop/lab5/src\miniSysY.g4 by ANTLR 4.9.2
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -22,6 +22,42 @@ public class miniSysYBaseListener implements miniSysYListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCompUnit(miniSysYParser.CompUnitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalDecl(miniSysYParser.GlobalDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDecl(miniSysYParser.GlobalDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalVarDecl(miniSysYParser.GlobalVarDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalVarDecl(miniSysYParser.GlobalVarDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalVarDef(miniSysYParser.GlobalVarDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalVarDef(miniSysYParser.GlobalVarDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

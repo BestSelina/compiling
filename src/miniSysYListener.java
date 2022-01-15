@@ -1,4 +1,4 @@
-// Generated from C:/Users/Best Selina/Desktop/lab4/src\miniSysY.g4 by ANTLR 4.9.2
+// Generated from C:/Users/Best Selina/Desktop/lab5/src\miniSysY.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -16,6 +16,36 @@ public interface miniSysYListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCompUnit(miniSysYParser.CompUnitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#globalDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDecl(miniSysYParser.GlobalDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#globalDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDecl(miniSysYParser.GlobalDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#globalVarDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalVarDecl(miniSysYParser.GlobalVarDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#globalVarDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalVarDecl(miniSysYParser.GlobalVarDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link miniSysYParser#globalVarDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalVarDef(miniSysYParser.GlobalVarDefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link miniSysYParser#globalVarDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalVarDef(miniSysYParser.GlobalVarDefContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link miniSysYParser#funcDef}.
 	 * @param ctx the parse tree
